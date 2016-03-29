@@ -1,0 +1,14 @@
+{
+  "name": "hellophaser",
+  "version": "1.0.0",
+  "description": "Hola món Phaser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adam Alvarado",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^2.4.6"
+  }
+}
