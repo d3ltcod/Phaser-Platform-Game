@@ -17,6 +17,7 @@ Hola!
             game.load.image('ground', 'assets/platform.png');
             game.load.image('star', 'assets/star.png');
             game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+            game.load.audio('coin', 'assets/coin.wav');
             this.score = 0;
         },
 
@@ -40,6 +41,10 @@ Hola!
             this.ledge.body.immovable = true;
             this.ledge = this.platforms.create(-150, 250, 'ground');
             this.ledge.body.immovable = true;
+
+            //Added sounds
+            game.sound.mute = true;
+            this.coinSound = game.add.audio('coin', 0.1);
 
             //Added player and enable pysics
             this.player = game.add.sprite(1, game.world.height - 450, 'dude');
@@ -123,12 +128,15 @@ Hola!
         },
 
         collectStart: function (player, star) {
+            game.sound.mute = false;
+
             // Removes the star from the screen
             star.kill();
 
             //  Add and update the score
             this.score += 10;
             this.scoreText.text = 'Score: ' + this.score;
+            this.coinSound.play();
 
         }
     };
@@ -137,7 +145,7 @@ Hola!
 
     game.state.add('play', playState);
     game.state.start('play');
-    
+
 </script>
 </body>
 </html>
