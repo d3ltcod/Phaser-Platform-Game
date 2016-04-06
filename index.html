@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+        overflow:hidden;
+    }
+    canvas {
+        margin: 0 auto;
+    }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <title>Hello World Phaser</title>
 </head>
 <body>
-Hola!
 
 <script src="./node_modules/phaser/dist/phaser.js"></script>
 <script type="text/javascript">
@@ -13,51 +24,50 @@ Hola!
     var playState = {
 
         preload: function() {
-            game.load.image('sky', 'assets/sky.png');
-            game.load.image('ground', 'assets/platform.png');
-            game.load.image('star', 'assets/star.png');
-            game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-            game.load.audio('coin', 'assets/takecoin.wav');
-            game.load.audio('jump', 'assets/jump.wav');
-            game.load.audio('dead', 'assets/dead.wav');
-            game.load.audio('dust', 'assets/dust.wav');
+            this.game.load.tilemap('tilemap', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
+            this.game.load.image('Background', 'assets/mapTail/BackgroundGradient.png');
+            this.game.load.image('Platforms', 'assets/mapTail/Platforms.png');
+            this.game.load.image('star', 'assets/star.png');
+            this.game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+            this.game.load.audio('coin', 'assets/takecoin.wav');
+            this.game.load.audio('jump', 'assets/jump.wav');
+            this.game.load.audio('dead', 'assets/dead.wav');
+            this.game.load.audio('dust', 'assets/dust.wav');
             this.score = 0;
         },
 
         create: function() {
+            //Added map
+            this.map = this.game.add.tilemap('tilemap');
+            this.map.addTilesetImage('Background');
+            this.map.addTilesetImage('Platforms');
+
+            this.backgroundLayer = this.map.createLayer('Background');
+            this.platformsLayer = this.map.createLayer('Platforms');
+
+            //Before you can use the collide function you need to set what tiles can collide
+            this.map.setCollisionBetween(1, 10000, true, 'Platforms');
+
+            this.backgroundLayer.resizeWorld();
+
             //Added physics
-            game.physics.startSystem(Phaser.Physics.ARCADE);
-
-            //Added background
-            game.add.sprite(0, 0, 'sky');
-
-            //Added platforms
-            this.platforms = game.add.group();
-            this.platforms.enableBody = true;
-
-            this.ground = this.platforms.create(0, game.world.height - 64, 'ground');
-
-            this.ground.scale.setTo(2, 2);
-            this.ground.body.immovable = true;
-
-            this.ledge = this.platforms.create(400, 400, 'ground');
-            this.ledge.body.immovable = true;
-            this.ledge = this.platforms.create(-150, 250, 'ground');
-            this.ledge.body.immovable = true;
+            this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
             //Added sounds
-            game.sound.mute = true;
-            this.coinSound = game.add.audio('coin', 0.1);
-            this.jumpSound = game.add.audio('jump', 0.1);
-            this.dustSound = game.add.audio('dust', 0.1);
-            this.deadSound = game.add.audio('dead', 0.1);
+            this.game.sound.mute = true;
+            this.coinSound = this.game.add.audio('coin', 0.1);
+            this.jumpSound = this.game.add.audio('jump', 0.1);
+            this.dustSound = this.game.add.audio('dust', 0.1);
+            this.deadSound = this.game.add.audio('dead', 0.1);
 
 
             //Added player and enable pysics
-            this.player = game.add.sprite(1, game.world.height - 450, 'dude');
-            game.physics.arcade.enable(this.player);
+            this.player = this.game.add.sprite(1, this.game.world.height - 450, 'dude');
+            this.game.physics.arcade.enable(this.player);
+            //Make the camera follow the sprite
+            this.game.camera.follow(this.player);
 
-            //  Player physics properties. Give the little guy a slight bounce.
+            // Player physics properties. Give the little guy a slight bounce.
             this.player.body.bounce.y = 0.2;
             this.player.body.gravity.y = 300;
             this.player.body.collideWorldBounds = true;
@@ -67,7 +77,7 @@ Hola!
             this.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
             //  Finally some stars to collect
-            this.stars = game.add.group();
+            this.stars = this.game.add.group();
 
             //  We will enable physics for any star that is created in this group
             this.stars.enableBody = true;
@@ -78,25 +88,26 @@ Hola!
                 this.star = this.stars.create(i * 70, 0, 'star');
 
                 //  Let gravity do its thing
-                this.star.body.gravity.y = 300;
+                this.star.body.gravity.y = 100;
 
                 //  This just gives each star a slightly random bounce value
                 this.star.body.bounce.y = 0.7 + Math.random() * 0.2;
             }
 
             //  The score
-            this.scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+            this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+            this.scoreText.fixedToCamera = true;
 
             //  Our controls.
-            this.cursors = game.input.keyboard.createCursorKeys();
+            this.cursors = this.game.input.keyboard.createCursorKeys();
         },
 
         update: function() {
-            game.physics.arcade.collide(this.player, this.platforms);
-            game.physics.arcade.collide(this.stars, this.platforms);
+            this.game.physics.arcade.collide(this.player, this.platformsLayer);
+            this.game.physics.arcade.collide(this.stars, this.platformsLayer);
 
             //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-            game.physics.arcade.overlap(this.player, this.stars, this.collectStart, null, this);
+            this.game.physics.arcade.overlap(this.player, this.stars, this.collectStart, null, this);
 
             this.inputs();
         },
@@ -128,7 +139,7 @@ Hola!
             }
 
             //  Allow the player to jump if they are touching the ground.
-            if (this.cursors.up.isDown && this.player.body.touching.down)
+            if (this.cursors.up.isDown)
             {
                 this.player.body.velocity.y = -350;
                 this.jumpSound.play();
@@ -136,7 +147,7 @@ Hola!
         },
 
         collectStart: function (player, star) {
-            game.sound.mute = false;
+            this.game.sound.mute = false;
 
             // Removes the star from the screen
             star.kill();
@@ -149,7 +160,7 @@ Hola!
         }
     };
 
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
+    var game = new Phaser.Game(1920, 1080, Phaser.AUTO, '');
 
     game.state.add('play', playState);
     game.state.start('play');
