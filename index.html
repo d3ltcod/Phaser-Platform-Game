@@ -33,6 +33,7 @@
             this.game.load.audio('jump', 'assets/jump.wav');
             this.game.load.audio('dead', 'assets/dead.wav');
             this.game.load.audio('dust', 'assets/dust.wav');
+            this.game.load.audio('music', 'assets/music.mp3');
             this.score = 0;
         },
 
@@ -54,11 +55,12 @@
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
             //Added sounds
-            this.game.sound.mute = true;
-            this.coinSound = this.game.add.audio('coin', 0.1);
-            this.jumpSound = this.game.add.audio('jump', 0.1);
-            this.dustSound = this.game.add.audio('dust', 0.1);
-            this.deadSound = this.game.add.audio('dead', 0.1);
+            this.coinSound = this.game.add.audio('coin', 0.3);
+            this.jumpSound = this.game.add.audio('jump', 0.3);
+            this.dustSound = this.game.add.audio('dust', 0.3);
+            this.deadSound = this.game.add.audio('dead', 0.3);
+            this.music = this.game.add.audio('music', 0.2);
+            this.music.play();
 
 
             //Added player and enable pysics
@@ -153,10 +155,7 @@
         },
 
         collectStart: function (player, star) {
-            this.game.sound.mute = false;
-
             // Removes the star from the screen with tween
-            this.game.sound.mute = false;
             star.body.enable = false;
             game.add.tween(star.scale).to({x:0}, 150).start();
             game.add.tween(star).to({y:50}, 150).start();
