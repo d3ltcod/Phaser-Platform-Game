@@ -129,8 +129,11 @@
             //  Allow the player to jump if they are touching the ground.
             if (this.cursors.up.isDown)
             {
-                this.player.body.velocity.y = -350;
-                this.jumpSound.play();
+                if (this.player.body.onFloor())
+                {
+                    this.player.body.velocity.y = -350;
+                    this.jumpSound.play();
+                }
             }
         },
 
