@@ -62,7 +62,7 @@
 
 
             //Added player and enable pysics
-            this.player = this.game.add.sprite(1, this.game.world.height - 450, 'dude');
+            this.player = this.game.add.sprite(1, this.game.world.height -195, 'dude');
             this.game.physics.arcade.enable(this.player);
             //Make the camera follow the sprite
             this.game.camera.follow(this.player);
@@ -76,23 +76,9 @@
             this.player.animations.add('left', [0, 1, 2, 3], 10, true);
             this.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-            //  Finally some stars to collect
-            this.stars = this.game.add.group();
 
-            //  We will enable physics for any star that is created in this group
-            this.stars.enableBody = true;
-
-            for (var i = 0; i < 12; i++)
-            {
-                //  Create a star inside of the 'stars' group
-                this.star = this.stars.create(i * 70, 0, 'star');
-
-                //  Let gravity do its thing
-                this.star.body.gravity.y = 100;
-
-                //  This just gives each star a slightly random bounce value
-                this.star.body.bounce.y = 0.7 + Math.random() * 0.2;
-            }
+            //Added some coins
+            this.addCoins();
 
             //  The score
             this.scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
@@ -146,11 +132,35 @@
             }
         },
 
+        addCoins: function(){
+
+            this.stars = this.game.add.group();
+
+            //  We will enable physics for any star that is created in this group
+            this.stars.enableBody = true;
+
+            for (var i = 0; i < 20; i++)
+            {
+                //  Create a star inside of the 'stars' group
+                this.star = this.stars.create(i * 140, 250, 'star');
+
+                //  Let gravity do its thing
+                this.star.body.gravity.y = 100;
+
+                //  This just gives each star a slightly random bounce value
+                this.star.body.bounce.y = 0.7 + Math.random() * 0.2;
+            }
+        },
+
         collectStart: function (player, star) {
             this.game.sound.mute = false;
 
-            // Removes the star from the screen
-            star.kill();
+            // Removes the star from the screen with tween
+            this.game.sound.mute = false;
+            star.body.enable = false;
+            game.add.tween(star.scale).to({x:0}, 150).start();
+            game.add.tween(star).to({y:50}, 150).start();
+            this.coinSound.play();
 
             //  Add and update the score
             this.score += 10;
