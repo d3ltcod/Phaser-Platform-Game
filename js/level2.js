@@ -29,6 +29,14 @@ var Level2 = {
         //Added Particles
         this.setParticles();
 
+        //Added bullet and controls
+        this.addBullets();
+        this.bulletTime = 0;
+        this.shootButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+        //  An explosion pool
+        this.addExplosion();
+
         //  The score
         this.score = 0;
         this.scoreText = this.game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
@@ -46,11 +54,14 @@ var Level2 = {
         this.game.physics.arcade.collide(this.player, this.platformsLayer);
         this.game.physics.arcade.collide(this.stars, this.platformsLayer);
         this.game.physics.arcade.collide(this.enemy, this.platformsLayer);
+        this.game.physics.arcade.collide(this.bullets, this.platformsLayer);
 
         //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
         this.game.physics.arcade.overlap(this.player, this.stars, this.takeCoin, null, this);
         //  Checks to see if the player overlaps with any of the enemy, if he does call the deadPlayer function
         this.game.physics.arcade.overlap(this.player, this.enemy, this.deadPlayer, null, this);
+        //  Checks to see if the bullet overlaps with any of the enemy, if he does call the deadPlayer function
+        this.game.physics.arcade.overlap(this.bullets, this.enemy, this.deadEnemy, null, this);
 
         this.inputs();
 
@@ -58,6 +69,7 @@ var Level2 = {
 
         if ( this.player.position.x > 3080){
             this.music.stop();
+            this.rainSound.stop();
             this.game.state.start('Finish');
         }
     },
@@ -96,6 +108,11 @@ var Level2 = {
                 this.player.body.velocity.y = -350;
                 this.jumpSound.play();
             }
+        }
+
+        if (this.shootButton.isDown)
+        {
+            this.shoot();
         }
     },
 
@@ -171,9 +188,10 @@ var Level2 = {
         this.jumpSound = this.game.add.audio('jump', 0.3);
         this.deadSound = this.game.add.audio('dead', 0.3);
         this.music = this.game.add.audio('music', 0.2);
-        this.rain = this.game.add.audio('rain', 0.2);
+        this.rainSound = this.game.add.audio('rain', 0.2);
+        this.shootSound = this.game.add.audio('shoot', 0.3);
         this.music.play().loopFull();
-        this.rain.play().loopFull();
+        this.rainSound.play().loopFull();
     },
 
     addEnemy: function (){
@@ -232,6 +250,7 @@ var Level2 = {
 
         if (this.playerDead) {
             this.music.stop();
+            this.rainSound.stop();
             this.game.state.start('Game_Over');
 
         } else {
@@ -248,6 +267,9 @@ var Level2 = {
 
         this.score = 0;
         this.scoreText.text = 'Score: 0';
+
+        this.enemy.removeAll();
+        this.addEnemy();
 
         this.stars.removeAll();
         this.addCoins();
@@ -292,5 +314,60 @@ var Level2 = {
             .to({x:"-"+move}, time).to({x:"+"+move*2}, time*2).to({x:"-"+move}, time)
             .to({x:"-"+move/2}, time).to({x:"+"+move}, time*2).to({x:"-"+move/2}, time)
             .start();
+    },
+
+    addBullets: function(){
+        this.bullets = game.add.group();
+        this.bullets.enableBody = true;
+        this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+        this.bullets.createMultiple(30, 'bullet');
+        this.bullets.setAll('anchor.x', 0.5);
+        this.bullets.setAll('anchor.y', 1);
+        this.bullets.setAll('outOfBoundsKill', true);
+        this.bullets.setAll('checkWorldBounds', true);
+    },
+
+    shoot: function(){
+        //  To avoid them being allowed to fire too fast we set a time limit
+        if (this.game.time.now > this.bulletTime)
+        {
+            //  Grab the first bullet we can from the pool
+            this.bullet = this.bullets.getFirstExists(false);
+
+            if (this.bullet)
+            {
+                this.shootSound.play();
+
+                //  And fire it
+                this.bullet.reset(this.player.x + 8, this.player.y);
+                this.bullet.body.velocity.x = + 400;
+                this.bulletTime = this.game.time.now + 200;
+            }
+        }
+    },
+
+    deadEnemy: function(bullet, enemy){
+
+        this.deadSound.play();
+
+        //  When a bullet hits an alien we kill them both
+        bullet.kill();
+        enemy.kill();
+
+        this.explosion = this.explosions.getFirstExists(false);
+        this.explosion.reset(enemy.body.x, enemy.body.y);
+        this.explosion.play('kaboom', 10, false, true);
+    },
+
+    addExplosion: function(){
+        this.explosions = this.game.add.group();
+        this.explosions.createMultiple(30, 'kaboom');
+        this.explosions.forEach(this.createExplosion, this);
+    },
+
+    createExplosion: function(explosion) {
+        explosion.anchor.x = 0.5;
+        explosion.anchor.y = 0.5;
+        explosion.animations.add('kaboom');
     }
 }

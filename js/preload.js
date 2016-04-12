@@ -23,10 +23,14 @@ var PreloadState = {
         this.game.load.audio('music', 'assets/Sounds/music.mp3');
         this.game.load.audio('rain', 'assets/Sounds/rain.mp3');
         this.game.load.spritesheet('rain', 'assets/img/rain.png', 30, 30);
+        this.game.load.image('bullet', 'assets/img/shoot.png');
+        this.game.load.spritesheet('kaboom', 'assets/img/explode.png', 128, 128);
+        this.game.load.audio('shoot', 'assets/Sounds/shoot.wav');
+
     },
     create : function() {
 
-        this.game.state.start('Level2');
+        this.game.state.start('Level1');
 
     }
 };
