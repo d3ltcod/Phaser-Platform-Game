@@ -17,6 +17,8 @@ var Level2 = {
         //Player lives
         this.addLives();
 
+        //Added rain
+        this.addRain();
 
         //Added some coins
         this.addCoins();
@@ -131,6 +133,25 @@ var Level2 = {
         }
     },
 
+    addRain: function(){
+        this.emitter = this.game.add.emitter(this.game.world.centerX, 0, 400);
+
+        this.emitter.width = this.game.world.width;
+
+        this.emitter.makeParticles('rain');
+
+        this.emitter.minParticleScale = 0.1;
+        this.emitter.maxParticleScale = 0.5;
+
+        this.emitter.setYSpeed(300, 500);
+        this.emitter.setXSpeed(-5, 5);
+
+        this.emitter.minRotation = 0;
+        this.emitter.maxRotation = 0;
+
+        this.emitter.start(false, 1600, 5, 0);
+    },
+
     takeCoin: function (player, star) {
         // Removes the star from the screen with tween
         star.body.enable = false;
@@ -150,7 +171,9 @@ var Level2 = {
         this.jumpSound = this.game.add.audio('jump', 0.3);
         this.deadSound = this.game.add.audio('dead', 0.3);
         this.music = this.game.add.audio('music', 0.2);
-        this.music.play().loopFull();;
+        this.rain = this.game.add.audio('rain', 0.2);
+        this.music.play().loopFull();
+        this.rain.play().loopFull();
     },
 
     addEnemy: function (){
