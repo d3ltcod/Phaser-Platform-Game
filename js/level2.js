@@ -1,4 +1,4 @@
-var Game = {
+var Level2 = {
 
     create: function() {
         //Added map
@@ -46,6 +46,11 @@ var Game = {
         this.game.physics.arcade.overlap(this.player, this.enemy, this.deadPlayer, null, this);
 
         this.inputs();
+
+        if ( this.player.position.x > 3080){
+            this.music.stop();
+            this.game.state.start('Finish');
+        }
     },
 
     inputs: function() {
@@ -86,7 +91,7 @@ var Game = {
     },
 
     addMap: function(){
-        this.map = this.game.add.tilemap('tilemap');
+        this.map = this.game.add.tilemap('tilemapLevel2');
         this.map.addTilesetImage('Background');
         this.map.addTilesetImage('Platforms');
 
@@ -145,8 +150,8 @@ var Game = {
 
         this.enemy = this.game.add.group();
 
-        this.enemy.create(460, 575, 'enemy');
-        this.enemy.create(2300, 575, 'enemy');
+        this.enemy.create(840, 550, 'enemy');
+        this.enemy.create(2260, 550, 'enemy');
 
         this.game.physics.arcade.enable(this.enemy);
 

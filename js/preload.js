@@ -9,7 +9,8 @@ var PreloadState = {
 
         this.load.setPreloadSprite(this.preloadBar);
 
-        this.game.load.tilemap('tilemap', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.tilemap('tilemapLevel1', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON);
+        this.game.load.tilemap('tilemapLevel2', 'assets/maps/level2.json', null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image('Background', 'assets/mapTail/BackgroundGradient.png');
         this.game.load.image('Platforms', 'assets/mapTail/Platforms.png');
         this.game.load.image('star', 'assets/img/star.png');
@@ -23,7 +24,7 @@ var PreloadState = {
     },
     create : function() {
 
-        this.game.state.start('Game');
+        this.game.state.start('Level1');
 
     }
 };
