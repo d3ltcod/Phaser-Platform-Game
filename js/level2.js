@@ -32,6 +32,10 @@ var Level2 = {
         this.scoreText = this.game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
         this.scoreText.fixedToCamera = true;
 
+        //Level
+        this.levelText = this.game.add.text(440, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
+        this.levelText.fixedToCamera = true;
+
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys();
     },
@@ -39,6 +43,7 @@ var Level2 = {
     update: function() {
         this.game.physics.arcade.collide(this.player, this.platformsLayer);
         this.game.physics.arcade.collide(this.stars, this.platformsLayer);
+        this.game.physics.arcade.collide(this.enemy, this.platformsLayer);
 
         //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
         this.game.physics.arcade.overlap(this.player, this.stars, this.takeCoin, null, this);
@@ -46,6 +51,8 @@ var Level2 = {
         this.game.physics.arcade.overlap(this.player, this.enemy, this.deadPlayer, null, this);
 
         this.inputs();
+
+        this.enemyMove();
 
         if ( this.player.position.x > 3080){
             this.music.stop();
@@ -149,12 +156,23 @@ var Level2 = {
     addEnemy: function (){
 
         this.enemy = this.game.add.group();
+        this.enemy.enableBody = true;
 
-        this.enemy.create(840, 550, 'enemy');
-        this.enemy.create(2260, 550, 'enemy');
+        this.enemy1 = this.enemy.create(840, 550, 'enemy');
+        this.enemy2 = this.enemy.create(2260, 550, 'enemy');
 
-        this.game.physics.arcade.enable(this.enemy);
+        this.enemy1.body.gravity.y = 300;
+        this.enemy1.body.velocity.x = 250;
+        this.enemy2.body.gravity.y = 300;
+        this.enemy2.body.velocity.x = 80;
 
+    },
+
+    enemyMove: function(){
+        if (parseInt(this.enemy1.body.x) > 1400 ) { this.enemy1.body.velocity.x = -250; }
+        if (parseInt(this.enemy1.body.x) < 700 ) { this.enemy1.body.velocity.x = 250; }
+        if (parseInt(this.enemy2.body.x) > 2400 ) { this.enemy2.body.velocity.x = -80; }
+        if (parseInt(this.enemy2.body.x) < 2200 ) { this.enemy2.body.velocity.x = 80; }
     },
 
     addPlayer: function(){
