@@ -44,6 +44,10 @@ var Level1 = {
 
         //  Our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys();
+
+        //Detected device
+        if (!game.device.desktop)
+            this.addMobileInputs();
     },
 
     update: function() {
@@ -73,14 +77,14 @@ var Level1 = {
         //  Reset the players velocity (movement)
         this.player.body.velocity.x = 0;
 
-        if (this.cursors.left.isDown)
+        if (this.cursors.left.isDown || this.moveLeft)
         {
             //  Move to the left
             this.player.body.velocity.x = -150;
 
             this.player.animations.play('left');
         }
-        else if (this.cursors.right.isDown)
+        else if (this.cursors.right.isDown || this.moveRight)
         {
             //  Move to the right
             this.player.body.velocity.x = 150;
@@ -98,16 +102,20 @@ var Level1 = {
         //  Allow the player to jump if they are touching the ground.
         if (this.cursors.up.isDown)
         {
-            if (this.player.body.onFloor())
-            {
-                this.player.body.velocity.y = -350;
-                this.jumpSound.play();
-            }
+            this.jumpPlayer();
         }
 
         if (this.shootButton.isDown)
         {
             this.shoot();
+        }
+    },
+
+    jumpPlayer: function(){
+        if (this.player.body.onFloor())
+        {
+            this.player.body.velocity.y = -350;
+            this.jumpSound.play();
         }
     },
 
@@ -159,12 +167,12 @@ var Level1 = {
     },
 
     addSound: function(){
-        this.coinSound = this.game.add.audio('coin', 0.3);
-        this.jumpSound = this.game.add.audio('jump', 0.3);
-        this.deadSound = this.game.add.audio('dead', 0.3);
-        this.shootSound = this.game.add.audio('shoot', 0.3);
-        this.music = this.game.add.audio('music', 0.2);
-        this.music.play().loopFull();;
+        this.coinSound = this.game.add.audio('coinSound', 0.3);
+        this.jumpSound = this.game.add.audio('jumpSound', 0.3);
+        this.deadSound = this.game.add.audio('deadSound', 0.3);
+        this.music = this.game.add.audio('musicSound', 0.2);
+        this.shootSound = this.game.add.audio('shootSound', 0.3);
+        this.music.play().loopFull();
     },
 
     addEnemy: function (){
@@ -342,5 +350,40 @@ var Level1 = {
         explosion.anchor.x = 0.5;
         explosion.anchor.y = 0.5;
         explosion.animations.add('kaboom');
+    },
+
+    addMobileInputs: function() {
+        this.jumpButton = game.add.sprite(430, 130, 'jump');
+        this.jumpButton.fixedToCamera = true;
+        this.jumpButton.inputEnabled = true;
+        this.jumpButton.events.onInputDown.add(this.jumpPlayer, this);
+        this.jumpButton.alpha = 0.5;
+
+        this.shootButton = game.add.sprite(730, 130, 'shoot');
+        this.shootButton.fixedToCamera = true;
+        this.shootButton.inputEnabled = true;
+        this.shootButton.events.onInputDown.add(this.shoot, this);
+        this.shootButton.alpha = 0.5;
+
+        this.moveLeft = false;
+        this.moveRight = false;
+
+        this.leftButton = game.add.sprite(10, 130, 'left');
+        this.leftButton.fixedToCamera = true;
+        this.leftButton.inputEnabled = true;
+        this.leftButton.events.onInputOver.add(function(){this.moveLeft=true;}, this);
+        this.leftButton.events.onInputOut.add(function(){this.moveLeft=false;}, this);
+        this.leftButton.events.onInputDown.add(function(){this.moveLeft=true;}, this);
+        this.leftButton.events.onInputUp.add(function(){this.moveLeft=false;}, this);
+        this.leftButton.alpha = 0.5;
+
+        this.rightButton = game.add.sprite(110, 130, 'right');
+        this.rightButton.fixedToCamera = true;
+        this.rightButton.inputEnabled = true;
+        this.rightButton.events.onInputOver.add(function(){this.moveRight=true;}, this);
+        this.rightButton.events.onInputOut.add(function(){this.moveRight=false;}, this);
+        this.rightButton.events.onInputDown.add(function(){this.moveRight=true;}, this);
+        this.rightButton.events.onInputUp.add(function(){this.moveRight=false;}, this);
+        this.rightButton.alpha = 0.5;
     }
 }
