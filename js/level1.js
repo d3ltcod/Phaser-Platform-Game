@@ -204,7 +204,7 @@ var Level1 = {
     },
 
     addPlayer: function(){
-        this.player = this.game.add.sprite(1, this.game.world.height -195, 'dude');
+        this.player = this.game.add.sprite(1, 1, 'dude');
         this.game.physics.arcade.enable(this.player);
         //Make the camera follow the sprite
         this.game.camera.follow(this.player);
