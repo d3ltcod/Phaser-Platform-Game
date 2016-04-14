@@ -4,6 +4,12 @@ var Level2 = {
         //Added map
         this.addMap();
 
+        //Scale
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.scale.pageAlignHorizontally = true;
+        //this.scale.pageAlignVertically = true;
+        this.scale.updateLayout();
+
         //Added physics
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -43,7 +49,7 @@ var Level2 = {
         this.scoreText.fixedToCamera = true;
 
         //Level
-        this.levelText = this.game.add.text(440, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
+        this.levelText = this.game.add.text(16, 116, 'Level 2', { fontSize: '16px', fill: '#000' });
         this.levelText.fixedToCamera = true;
 
         //  Our controls.
@@ -380,13 +386,13 @@ var Level2 = {
     },
 
     addMobileInputs: function() {
-        this.jumpButton = game.add.sprite(430, this.game.world.height -195, 'jump');
+        this.jumpButton = game.add.sprite(190, 400, 'jump');
         this.jumpButton.fixedToCamera = true;
         this.jumpButton.inputEnabled = true;
         this.jumpButton.events.onInputDown.add(this.jumpPlayer, this);
         this.jumpButton.alpha = 0.5;
 
-        this.shootButton = game.add.sprite(530, this.game.world.height -195, 'shoot');
+        this.shootButton = game.add.sprite(260, 400, 'shoot');
         this.shootButton.fixedToCamera = true;
         this.shootButton.inputEnabled = true;
         this.shootButton.events.onInputDown.add(this.shoot, this);
@@ -395,7 +401,7 @@ var Level2 = {
         this.moveLeft = false;
         this.moveRight = false;
 
-        this.leftButton = game.add.sprite(10, this.game.world.height -195, 'left');
+        this.leftButton = game.add.sprite(10, 400, 'left');
         this.leftButton.fixedToCamera = true;
         this.leftButton.inputEnabled = true;
         this.leftButton.events.onInputOver.add(function(){this.moveLeft=true;}, this);
@@ -404,7 +410,7 @@ var Level2 = {
         this.leftButton.events.onInputUp.add(function(){this.moveLeft=false;}, this);
         this.leftButton.alpha = 0.5;
 
-        this.rightButton = game.add.sprite(110, this.game.world.height -195, 'right');
+        this.rightButton = game.add.sprite(90, 400, 'right');
         this.rightButton.fixedToCamera = true;
         this.rightButton.inputEnabled = true;
         this.rightButton.events.onInputOver.add(function(){this.moveRight=true;}, this);
