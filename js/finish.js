@@ -7,6 +7,7 @@ var Finish = {
     },
 
     create : function() {
+        this.game.stage.backgroundColor = "#000000"
         this.stateText.visible = true;
         game.input.onTap.addOnce( this.startMenu,this);
 
