@@ -1,14 +1,14 @@
 var Finish = {
 
     preload : function() {
-        // Load the needed image for this game screen.
-        this.game.load.image('finish', 'assets/img/finish.png');
+        this.stateText = game.add.text(game.camera.width / 2,100,' ', { font: '24px Arial', fill: '#fff' });
+        this.stateText.anchor.setTo(0.5, 0.5);
+        this.stateText.text = " Congratulations!\n Game completed, \n --Click to go Menu--";
     },
 
     create : function() {
-
-        // Create button to start game like in Menu.
-        this.add.button(0, 0, 'finish', this.startMenu, this);
+        this.stateText.visible = true;
+        game.input.onTap.addOnce( this.startMenu,this);
 
     },
 

@@ -1,14 +1,15 @@
 var Game_Over = {
 
     preload : function() {
-        // Load the needed image for this game screen.
-        this.game.load.image('gameover', 'assets/img/gameover.jpg');
+        this.stateText = game.add.text(game.camera.width / 2,100,' ', { font: '24px Arial', fill: '#FFFFFF' });
+        this.stateText.anchor.setTo(0.5, 0.5);
+        this.stateText.text = " Game Over, \n --Click to restart--";
     },
 
     create : function() {
-
-        // Create button to start game like in Menu.
-        this.add.button(0, 0, 'gameover', this.startGame, this);
+        this.game.stage.backgroundColor = "#000000"
+        this.stateText.visible = true;
+        game.input.onTap.addOnce( this.startGame,this);
 
     },
 
